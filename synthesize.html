@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ZYM Pro Hub - Secure Node</title>
+    <title>ZYM Pro Hub - Cloud Node</title>
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,36 +13,27 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --bg: #000; --accent: #00f2ff; --card-bg: #0d0d0d; --text-dim: #a0a0a0; }
+        :root { --bg: #000; --accent: #00f2ff; --card-bg: #0d0d0d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #e0e0e0; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; margin: 0; padding: 15px; }
-        
-        /* UI Enhancements */
         .balance-box { background: var(--card-bg); border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 18px; padding: 12px 18px; display: flex; align-items: center; gap: 14px; width: fit-content; }
         .zym-card { background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 35px; padding: 20px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 0; height: 210px; margin: 15px 0; position: relative; }
-        
-        /* Mining Font Fix (Small size to prevent overflow) */
         .mining-display { font-size: 42px; font-weight: 900; line-height: 1; letter-spacing: -1.5px; color: #fff; text-shadow: 0 0 20px rgba(0, 242, 255, 0.2); margin: 5px 0; }
-        
         .btn-zym { width: 100%; height: 60px; border-radius: 30px; font-weight: 900; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: 0.3s; }
         .btn-start { background: #fff; color: #000; }
         .btn-active { background: #151515; color: #555; pointer-events: none; border: 1px solid #222; }
         .btn-claim { background: linear-gradient(135deg, #007AFF, #00f2ff); color: #fff; }
-
-        .upgrade-link { width: 100%; height: 52px; margin-top: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--text-dim); text-decoration: none; font-size: 13px; font-weight: 800; text-transform: uppercase; }
-        
         .nav-wrapper { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 94%; z-index: 1000; }
         .nav-container { background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; padding: 10px; border: 1px solid rgba(255,255,255,0.08); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #555; font-size: 9px; font-weight: 800; text-transform: uppercase; text-decoration: none; gap: 4px; }
         .nav-item.active { color: var(--accent); }
         .nav-main-btn { position: relative; top: -25px; width: 68px; height: 68px; background: #000; border-radius: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); border: 4px solid var(--bg); }
-        
-        #overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--accent); letter-spacing: 4px; font-weight: 900; text-align: center; padding: 20px; }
+        #overlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--accent); letter-spacing: 4px; font-weight: 900; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div id="overlay">ZYM ENGINE INITIALIZING...</div>
+    <div id="overlay">SYNCING CLOUD...</div>
 
     <header>
         <div class="balance-box">
@@ -75,7 +66,7 @@
 
         <button id="action-btn" class="btn-zym btn-start">Start Protocol</button>
 
-        <a href="uppower.html" class="upgrade-link">
+        <a href="uppower.html" style="width:100%; height:52px; margin-top:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:20px; display:flex; align-items:center; justify-content:center; gap:10px; color:#a0a0a0; text-decoration:none; font-size:13px; font-weight:800; text-transform:uppercase;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00f2ff" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             <span>Upgrade <span style="color:#fff">Your Power</span></span>
         </a>
@@ -90,12 +81,7 @@
             <a href="holding.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg><span>Assets</span></a>
             <a href="objective.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7"/></svg><span>Tasks</span></a>
             <a href="index.html" class="nav-main-btn">
-                <svg viewBox="0 0 100 100" class="w-11 h-11">
-                    <path d="M50 5 L92 28 L92 72 L50 95 L8 72 L8 28 Z" fill="none" stroke="#d1d5db" stroke-width="7"/>
-                    <path d="M25 40 H45 L30 65 H50" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                    <path d="M55 65 V35 L70 50 L85 35 V65" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                    <path d="M55 15 L40 48 L52 48 L45 85 L70 42 L52 42 L62 15 Z" fill="#00f2ff" />
-                </svg>
+                <svg viewBox="0 0 100 100" class="w-11 h-11"><path d="M50 5 L92 28 L92 72 L50 95 L8 72 L8 28 Z" fill="none" stroke="#d1d5db" stroke-width="7"/><path d="M25 40 H45 L30 65 H50" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M55 65 V35 L70 50 L85 35 V65" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M55 15 L40 48 L52 48 L45 85 L70 42 L52 42 L62 15 Z" fill="#00f2ff"/></svg>
             </a>
             <a href="kinship.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>Network</span></a>
             <a href="config.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0"/><circle cx="12" cy="12" r="3"/></svg><span>Config</span></a>
@@ -103,24 +89,31 @@
     </div>
 
     <script>
-        // --- SECURE OBFUSCATED LOCAL STORAGE ---
-        const ZYM_STORE = {
-            set: (k, v) => localStorage.setItem('zym_'+k, btoa(encodeURIComponent(JSON.stringify(v)))),
-            get: (k) => { 
-                const d = localStorage.getItem('zym_'+k); 
-                if(!d) return null;
-                try { return JSON.parse(decodeURIComponent(atob(d))); } catch(e) { return null; }
-            },
-            remove: (k) => localStorage.removeItem('zym_'+k)
-        };
-
         const tg = window.Telegram.WebApp;
         const tgUser = tg.initDataUnsafe?.user;
         const tgID = tgUser?.id?.toString();
         const tgName = tgUser?.first_name || "GUEST";
+
+        // --- CLOUD STORAGE ---
+        const ZYM_CLOUD = {
+            set: (k, v) => {
+                const data = btoa(encodeURIComponent(JSON.stringify(v)));
+                tg.CloudStorage.setItem('zym_' + k, data);
+            },
+            get: (k, callback) => {
+                tg.CloudStorage.getItem('zym_' + k, (err, res) => {
+                    if (err || !res) return callback(null);
+                    try {
+                        const decoded = JSON.parse(decodeURIComponent(atob(res)));
+                        callback(decoded);
+                    } catch (e) { callback(null); }
+                });
+            }
+        };
+
         const SECRET = "ZYM_FLUX_99";
         const SESSION_LIMIT = 10 * 60 * 1000;
-        const DURATION = 8 * 3600;
+        const DURATION = 8 * 3600; 
 
         firebase.initializeApp({
             apiKey: "AIzaSyDZpeu9EL9kbJPO7PKEnuoNoMHbYWUSHOU",
@@ -133,12 +126,11 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        let mainBalance = parseFloat(ZYM_STORE.get('bal')) || 0;
-        let MINE_LIMIT = parseFloat(ZYM_STORE.get('mine_limit')) || 10000; 
-        let startTime = ZYM_STORE.get('start_ts');
+        let mainBalance = 0;
+        let MINE_LIMIT = 10000; 
+        let startTime = null;
         let ticker = null;
 
-        // --- BALANCE FORMATTER ---
         function formatBalance(num) {
             if (num < 1000) return Math.floor(num).toString();
             let suffix = ""; let val = 0;
@@ -148,55 +140,45 @@
             return val.toFixed(3) + suffix;
         }
 
-        async function initApp() {
-            if (!tgID) { document.getElementById('overlay').innerText = "ERROR: PLEASE OPEN IN TELEGRAM"; return; }
-
-            const lastActive = ZYM_STORE.get('session_ts');
-            const now = Date.now();
-
-            if (lastActive && (now - lastActive < SESSION_LIMIT)) {
-                // সেশন ভ্যালিড থাকলে সরাসরি রেন্ডার
-                renderApp();
-            } else {
-                // সেশন না থাকলে বা ১০ মিনিট পার হলে ফায়ারবেস থেকে সিঙ্ক
-                await syncWithFirebase();
-            }
-        }
-
         async function syncWithFirebase() {
             const email = `${tgID}@t.me`;
             const pass = `${tgID}${SECRET}`;
-            
             try {
-                // ১. আগে লগইন নিশ্চিত করা
                 await auth.signInWithEmailAndPassword(email, pass).catch(async (error) => {
                     if (error.code === 'auth/user-not-found') {
                         return await auth.createUserWithEmailAndPassword(email, pass);
                     } else throw error;
                 });
 
-                // ২. লগইন হওয়ার পর ডাটা রিড করা (যাতে পারমিশন এরর না আসে)
                 const doc = await db.collection('users').doc(tgID).get();
                 if (doc.exists) {
                     const data = doc.data();
                     mainBalance = data.balance || 0;
                     MINE_LIMIT = data.miningPower || 10000;
                 } else {
-                    await db.collection('users').doc(tgID).set({ 
-                        telegramID: tgID, name: tgName, balance: 0, 
-                        miningPower: 10000, isAdmin: false, last_claim: null 
-                    });
-                    mainBalance = 0; MINE_LIMIT = 10000;
+                    await db.collection('users').doc(tgID).set({ telegramID: tgID, name: tgName, balance: 0, miningPower: 10000, isAdmin: false, last_claim: null });
                 }
                 
-                // ৩. লোকাল স্টোরেজে নতুন ডাটা সেভ
-                ZYM_STORE.set('bal', mainBalance);
-                ZYM_STORE.set('mine_limit', MINE_LIMIT);
-                ZYM_STORE.set('session_ts', Date.now());
+                ZYM_CLOUD.set('bal', mainBalance);
+                ZYM_CLOUD.set('mine_limit', MINE_LIMIT);
+                ZYM_CLOUD.set('session_ts', Date.now());
                 renderApp();
-            } catch (e) { 
-                document.getElementById('overlay').innerHTML = `SYNC FAILED:<br><span style="font-size:10px; color:red; letter-spacing:0">${e.message}</span>`;
-            }
+            } catch (e) { document.getElementById('overlay').innerText = "SYNC FAILED: " + e.message; }
+        }
+
+        async function initApp() {
+            if (!tgID) { document.getElementById('overlay').innerText = "ERROR: TELEGRAM ONLY"; return; }
+
+            ZYM_CLOUD.get('session_ts', (lastActive) => {
+                const now = Date.now();
+                if (lastActive && (now - lastActive < SESSION_LIMIT)) {
+                    ZYM_CLOUD.get('bal', (b) => { mainBalance = b || 0; 
+                    ZYM_CLOUD.get('mine_limit', (m) => { MINE_LIMIT = m || 10000;
+                    ZYM_CLOUD.get('start_ts', (s) => { startTime = s; renderApp(); }); }); });
+                } else {
+                    syncWithFirebase();
+                }
+            });
         }
 
         function renderApp() {
@@ -205,8 +187,7 @@
             document.getElementById('mining-power-text').innerText = MINE_LIMIT.toLocaleString();
             document.getElementById('overlay').style.display = 'none';
             if (startTime) startTicker();
-            // প্রতিবার অ্যাপে অ্যাক্টিভিটি হলে সেশন টাইম আপডেট
-            ZYM_STORE.set('session_ts', Date.now());
+            ZYM_CLOUD.set('session_ts', Date.now());
         }
 
         function startTicker() {
@@ -237,25 +218,20 @@
             const btn = document.getElementById('action-btn');
             if (!startTime) {
                 startTime = Date.now();
-                ZYM_STORE.set('start_ts', startTime);
+                ZYM_CLOUD.set('start_ts', startTime);
                 startTicker();
             } else if (btn.classList.contains('btn-claim')) {
                 btn.innerText = "VERIFYING...";
-                btn.className = "btn-zym btn-active";
-                
                 db.collection('users').doc(tgID).update({
                     balance: firebase.firestore.FieldValue.increment(MINE_LIMIT),
                     last_claim: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
                     mainBalance += MINE_LIMIT;
-                    ZYM_STORE.set('bal', mainBalance);
-                    ZYM_STORE.set('session_ts', Date.now());
-                    ZYM_STORE.remove('start_ts');
+                    ZYM_CLOUD.set('bal', mainBalance);
+                    ZYM_CLOUD.set('session_ts', Date.now());
+                    tg.CloudStorage.removeItem('zym_start_ts');
                     location.reload();
-                }).catch(e => {
-                    alert("Claim Error: " + e.message);
-                    location.reload();
-                });
+                }).catch(e => alert("Error: " + e.message));
             }
         });
 
