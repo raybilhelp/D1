@@ -180,7 +180,7 @@
                     if (!snap.exists) return;
                     let count = (snap.data().total_refer || 0) + 1;
                     let slot = (count > 50) ? ((count - 1) % 50) + 1 : count;
-                    let up = { total_refer: count, balance: firebase.firestore.FieldValue.increment(1000) };
+                    let up = { total_refer: count, balance: firebase.firestore.FieldValue.increment(5000) };
                     up['user' + slot] = `${newID}: ${newName}`;
                     t.update(refRef, up);
                 });
