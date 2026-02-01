@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zyntro - Protocol Initiating</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glow-cyan: #00f2ff;
+            --glow-purple: #9d00ff;
+            --bg-dark: #020617;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+        }
+
+        /* ডাইনামিক ব্যাকগ্রাউন্ড গ্লো */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at center, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+            animation: moveBg 10s ease infinite;
+        }
+        @keyframes moveBg {
+            0%, 100% { transform: translate(-10%, -10%); }
+            50% { transform: translate(10%, 10%); }
+        }
+
+        /* আলোকিত কণা বৃষ্টির ইফেক্ট */
+        .spark {
+            position: absolute;
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(to bottom, transparent, var(--glow-cyan));
+            border-radius: 2px;
+            opacity: 0.5;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            to { transform: translateY(110vh); opacity: 0; }
+        }
+
+        /* কোর লোগো কন্টেইনার */
+        .core-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        /* অরবিট রিংস (একাধিক রিং) */
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+        .ring-1 {
+            width: 100%; height: 100%;
+            border-top: 3px solid var(--glow-cyan);
+            border-right: 1px solid rgba(0, 242, 255, 0.2);
+            animation: spin 2s linear infinite;
+        }
+        .ring-2 {
+            width: 85%; height: 85%;
+            border-bottom: 3px solid var(--glow-purple);
+            border-left: 1px solid rgba(157, 0, 255, 0.2);
+            animation: spinReverse 3s linear infinite;
+        }
+        .ring-3 {
+            width: 115%; height: 115%;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            animation: spin 8s linear infinite;
+        }
+
+        /* আলোর পালস */
+        .energy-pulse {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: var(--glow-cyan);
+            filter: blur(50px);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .main-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            z-index: 10;
+            object-fit: cover;
+            border: 4px solid rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.4);
+        }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes spinReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.8); opacity: 0.5; } }
+
+        /* প্রগ্রেস সেকশন */
+        .loader-box {
+            width: 280px;
+            text-align: center;
+            z-index: 20;
+        }
+        .loading-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--glow-purple), var(--glow-cyan));
+            box-shadow: 0 0 20px var(--glow-cyan);
+            border-radius: 20px;
+        }
+        .percentage {
+            margin-top: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--glow-cyan);
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+        }
+
+        /* স্ক্যানলাইন ইফেক্ট */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.1) 51%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scanline"></div>
+    <div id="spark-container"></div>
+
+    <div class="core-container">
+        <div class="energy-pulse"></div>
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <img src="https://i.ibb.co.com/7J7KC8kL/20260131-115048.png" alt="Zyntro Core" class="main-img">
+    </div>
+
+    <div class="loader-box">
+        <div class="loading-text" id="status-text">Synchronizing Node...</div>
+        <div class="progress-bar-container">
+            <div class="progress-fill" id="bar"></div>
+        </div>
+        <div class="percentage"><span id="val">0</span>%</div>
+    </div>
+
+    <script>
+        // ১. ডাইনামিক স্পার্কস বা আলোকিত কণা তৈরি
+        const container = document.getElementById('spark-container');
+        function createSpark() {
+            const spark = document.createElement('div');
+            spark.className = 'spark';
+            spark.style.left = Math.random() * 100 + 'vw';
+            spark.style.top = -20 + 'px';
+            const duration = Math.random() * 1 + 1;
+            spark.style.animationDuration = duration + 's';
+            container.appendChild(spark);
+            setTimeout(() => spark.remove(), duration * 1000);
+        }
+        setInterval(createSpark, 100);
+
+        // ২. সায়েন্টিফিক স্ট্যাটাস টেক্সট আপডেট
+        const statuses = ["Accessing Protocol...", "Establishing Link...", "Fetching Data...", "Syncing Node...", "Ready!"];
+        let statusIdx = 0;
+        setInterval(() => {
+            if(statusIdx < statuses.length - 1) {
+                statusIdx++;
+                document.getElementById('status-text').innerText = statuses[statusIdx];
+            }
+        }, 800);
+
+        // ৩. প্রগ্রেস বার ৪ সেকেন্ডে ১০০%
+        let progress = 0;
+        const bar = document.getElementById('bar');
+        const val = document.getElementById('val');
+        
+        const duration = 4000; 
+        const interval = 30;
+        const step = 100 / (duration / interval);
+
+        const loading = setInterval(() => {
+            progress += step;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(loading);
+                // রিডাইরেক্ট এনিমেশন সহ
+                document.body.style.transition = "1s";
+                document.body.style.opacity = "0";
+                document.body.style.transform = "scale(1.1)";
+                setTimeout(() => {
+                    window.location.href = "synthesize.html";
+                }, 800);
+            }
+            bar.style.width = progress + '%';
+            val.innerText = Math.floor(progress);
+        }, interval);
+    </script>
+</body>
+</html>
