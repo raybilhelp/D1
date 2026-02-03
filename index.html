@@ -114,7 +114,10 @@
                 try { return JSON.parse(decodeURIComponent(atob(d))); } catch(e) { return null; }
             },
             clearAll: () => {
-                Object.keys(localStorage).forEach(key => { if(key.startsWith('zym_')) localStorage.removeItem(key); });
+                Object.keys(localStorage).forEach(key => { 
+                    // মাইনিং শুরুর সময় (zym_start_ts) বাদে বাকি সেশন ডাটা মুছবে
+                    if(key.startsWith('zym_') && key !== 'zym_start_ts') localStorage.removeItem(key); 
+                });
             }
         };
 
@@ -126,6 +129,10 @@
         async function initApp() {
             const lastActive = ZYM_STORE.get('session_ts');
             const now = Date.now();
+            
+            // সেশন শেষ হলেও মাইনিং টাইমটা আগে থেকে লোড করে রাখি
+            startTime = ZYM_STORE.get('start_ts');
+
             if (lastActive && (now - lastActive < SESSION_LIMIT)) {
                 ZYM_STORE.set('session_ts', now);
                 loadLocal();
@@ -230,7 +237,10 @@
             } else if (btn.classList.contains('btn-claim')) {
                 try {
                     await db.collection('users').doc(tgID).update({ balance: firebase.firestore.FieldValue.increment(MINE_LIMIT) });
-                    ZYM_STORE.clearAll(); location.reload();
+                    // ক্লেম সফল হলে মাইনিং টাইম ফোন থেকে মুছে ফেলুন
+                    localStorage.removeItem('zym_start_ts');
+                    ZYM_STORE.clearAll(); 
+                    location.reload();
                 } catch (e) { alert("Sync Error"); }
             }
         });
