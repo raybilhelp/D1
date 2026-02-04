@@ -115,7 +115,6 @@
             },
             clearAll: () => {
                 Object.keys(localStorage).forEach(key => { 
-                    // মাইনিং শুরুর সময় (zym_start_ts) বাদে বাকি সেশন ডাটা মুছবে
                     if(key.startsWith('zym_') && key !== 'zym_start_ts') localStorage.removeItem(key); 
                 });
             }
@@ -129,10 +128,7 @@
         async function initApp() {
             const lastActive = ZYM_STORE.get('session_ts');
             const now = Date.now();
-            
-            // সেশন শেষ হলেও মাইনিং টাইমটা আগে থেকে লোড করে রাখি
             startTime = ZYM_STORE.get('start_ts');
-
             if (lastActive && (now - lastActive < SESSION_LIMIT)) {
                 ZYM_STORE.set('session_ts', now);
                 loadLocal();
@@ -153,12 +149,28 @@
             const email = `${tgID}@t.me`;
             const pass = `${tgID}${SECRET}`;
             try {
-                await firebase.auth().signInWithEmailAndPassword(email, pass).catch(() => firebase.auth().createUserWithEmailAndPassword(email, pass));
+                // Auth step with proper catch for new users
+                let userCredential;
+                try {
+                    userCredential = await firebase.auth().signInWithEmailAndPassword(email, pass);
+                } catch (e) {
+                    userCredential = await firebase.auth().createUserWithEmailAndPassword(email, pass);
+                }
+
                 const userRef = db.collection('users').doc(tgID);
                 let doc = await userRef.get();
 
                 if (!doc.exists) {
-                    await userRef.set({ balance: 0, miningPower: 10000, total_refer: 0, username: userName, referredBy: startParam });
+                    // New user creation
+                    const userData = { 
+                        balance: 0, 
+                        miningPower: 10000, 
+                        total_refer: 0, 
+                        username: userName, 
+                        referredBy: startParam || null,
+                        created_at: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    await userRef.set(userData);
                     if (startParam && startParam !== tgID) await processReferral(startParam, tgID, userName);
                     doc = await userRef.get();
                 }
@@ -176,7 +188,10 @@
 
                 ZYM_STORE.set('session_ts', Date.now());
                 renderApp();
-            } catch (e) { document.getElementById('overlay').innerText = "NODE CONNECTION ERROR"; }
+            } catch (e) { 
+                console.error(e);
+                document.getElementById('overlay').innerText = "NODE INITIALIZATION FAILED"; 
+            }
         }
 
         async function processReferral(refID, newID, newName) {
@@ -185,13 +200,17 @@
                 await db.runTransaction(async (t) => {
                     const snap = await t.get(refRef);
                     if (!snap.exists) return;
-                    let count = (snap.data().total_refer || 0) + 1;
+                    let currentData = snap.data();
+                    let count = (currentData.total_refer || 0) + 1;
                     let slot = (count > 50) ? ((count - 1) % 50) + 1 : count;
-                    let up = { total_refer: count, balance: firebase.firestore.FieldValue.increment(5000) };
+                    let up = { 
+                        total_refer: count, 
+                        balance: firebase.firestore.FieldValue.increment(5000) 
+                    };
                     up['user' + slot] = `${newID}: ${newName}`;
                     t.update(refRef, up);
                 });
-            } catch(e){}
+            } catch(e){ console.error("Referral Error:", e); }
         }
 
         function formatBalance(num) {
@@ -213,7 +232,7 @@
         function startTicker() {
             if(ticker) clearInterval(ticker);
             const btn = document.getElementById('action-btn'), RATE = MINE_LIMIT / DURATION;
-            ticker = setInterval(() => {
+            const updateUI = () => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
                 const remaining = DURATION - elapsed;
                 if (remaining > 0) {
@@ -227,7 +246,9 @@
                     document.getElementById('timer-text').innerText = "ALLOCATION READY";
                     btn.innerText = "CLAIM ALLOCATION"; btn.className = "btn-zym btn-claim";
                 }
-            }, 1000);
+            };
+            updateUI();
+            ticker = setInterval(updateUI, 1000);
         }
 
         document.getElementById('action-btn').addEventListener('click', async () => {
@@ -237,7 +258,6 @@
             } else if (btn.classList.contains('btn-claim')) {
                 try {
                     await db.collection('users').doc(tgID).update({ balance: firebase.firestore.FieldValue.increment(MINE_LIMIT) });
-                    // ক্লেম সফল হলে মাইনিং টাইম ফোন থেকে মুছে ফেলুন
                     localStorage.removeItem('zym_start_ts');
                     ZYM_STORE.clearAll(); 
                     location.reload();
