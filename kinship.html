@@ -4,22 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ZYM Network - Nodes</title>
-    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <style>
         :root { --bg: #000; --accent: #00f2ff; --card-bg: #0d0d0d; --text-main: #e0e0e0; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; margin: 0; padding: 15px; }
-        #copy-notification { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 12px 25px; border-radius: 20px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; z-index: 10001; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 30px rgba(0, 242, 255, 0.4); }
+        #copy-notification { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 12px 25px; border-radius: 20px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; z-index: 10001; transition: 0.5s; }
         #copy-notification.show { top: 25px; }
         .network-card { background: linear-gradient(180deg, #0d0d0d 0%, #050505 100%); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 30px; padding: 20px; text-align: center; }
         .stat-box { background: rgba(0, 242, 255, 0.04); border: 1px solid rgba(0, 242, 255, 0.1); border-radius: 16px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .value-text { font-size: 18px; font-weight: 900; color: #fff; }
         .invitation-hub { margin-top: 15px; background: #0d0d0d; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 25px; padding: 15px; text-align: center; }
-        .btn-copy-compact { width: 80%; height: 44px; background: #fff; color: #000; border-radius: 14px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto; transition: 0.2s; border: none; }
+        .btn-copy-compact { width: 80%; height: 44px; background: #fff; color: #000; border-radius: 14px; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 auto; border: none; }
         .link-display { background: rgba(0,0,0,0.5); border-radius: 12px; padding: 10px; font-size: 10px; color: #444; word-break: break-all; border: 1px solid rgba(255,255,255,0.02); font-family: monospace; margin-bottom: 12px; text-align: left; }
         .history-section { margin-top: 25px; padding-bottom: 120px; }
         .node-row { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); border-radius: 14px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -31,13 +29,8 @@
     </style>
 </head>
 <body>
-
     <div id="copy-notification">Referral Link Copied</div>
-
-    <header>
-        <h1 class="text-xl font-black text-white italic tracking-tighter uppercase">ZYM <span class="text-cyan-400">NETWORK</span></h1>
-    </header>
-
+    <header><h1 class="text-xl font-black text-white italic tracking-tighter uppercase">ZYM <span class="text-cyan-400">NETWORK</span></h1></header>
     <main>
         <div class="network-card">
             <h2 class="text-sm font-black text-white uppercase tracking-widest mb-4">Kinship Protocol</h2>
@@ -52,18 +45,14 @@
                 </div>
             </div>
         </div>
-
         <div class="invitation-hub">
             <span class="text-[10px] font-black text-cyan-500 uppercase tracking-widest mb-3 block">Your Invitation Hub</span>
-            <div id="ref-link-text" class="link-display">Loading protocol link...</div>
+            <div id="ref-link-text" class="link-display">Loading...</div>
             <button onclick="copyRef()" class="btn-copy-compact">Copy My Link</button>
         </div>
-
         <div class="history-section">
             <span class="text-[10px] font-black text-gray-700 uppercase tracking-[3px] mb-4 block">Active Network Nodes</span>
-            <div id="node-list">
-                <!-- Data will load here from local storage -->
-            </div>
+            <div id="node-list"></div>
         </div>
     </main>
 
@@ -79,37 +68,23 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // index.html এর সাথে হুবহু মিল রাখা হয়েছে
         const ZYM_STORE = {
             get: (k) => { 
                 const d = localStorage.getItem('zym_'+k); 
                 if(!d) return null;
-                try { 
-                    // btoa এবং encodeURIComponent হ্যান্ডলিং
-                    const decoded = decodeURIComponent(atob(d));
-                    return JSON.parse(decoded);
-                } catch(e) { 
-                    console.log("Decoding error:", e);
-                    return null; 
-                }
+                try { return JSON.parse(decodeURIComponent(atob(d))); } catch(e) { return null; }
             }
         };
 
         function initNetworkData() {
-            const user = tg.initDataUnsafe?.user;
-            const botUsername = "Ghiyvndbot";
-            const tgID = user?.id?.toString() || "7867767";
-            
-            // লিঙ্ক সেটআপ
-            document.getElementById('ref-link-text').innerText = `https://t.me/${botUsername}?startapp=${tgID}`;
+            const tgID = tg.initDataUnsafe?.user?.id?.toString() || "7867767";
+            document.getElementById('ref-link-text').innerText = `https://t.me/Ghiyvndbot?startapp=${tgID}`;
 
-            // ১. টোটাল রেফার সংখ্যা দেখানো
+            // রেফারেল সংখ্যা দেখানো
             const count = ZYM_STORE.get('ref_count') || 0;
             document.getElementById('ref-count-display').innerHTML = `${count} <span class="text-xs text-cyan-400 ml-1">Nodes</span>`;
 
-            // ২. রেফারাল লিস্ট (user_list) দেখানো
+            // রেফারেল লিস্ট দেখানো
             const container = document.getElementById('node-list');
             const userList = ZYM_STORE.get('user_list') || {}; 
             const entries = Object.entries(userList);
@@ -119,17 +94,10 @@
             } else {
                 container.innerHTML = "";
                 entries.forEach(([key, value]) => {
-                    // "ID: Name" ফরম্যাট থেকে শুধু নাম নেওয়া
                     const displayName = value.includes(':') ? value.split(':')[1].trim() : value;
                     const row = document.createElement('div');
                     row.className = "node-row";
-                    row.innerHTML = `
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#00f2ff]"></div>
-                            <span class="text-[11px] font-black text-white uppercase tracking-wider">${displayName}</span>
-                        </div>
-                        <span class="text-[10px] font-black text-cyan-400">+5,000 ZYM</span>
-                    `;
+                    row.innerHTML = `<div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#00f2ff]"></div><span class="text-[11px] font-black text-white uppercase">${displayName}</span></div><span class="text-[10px] font-black text-cyan-400">+5,000 ZYM</span>`;
                     container.appendChild(row);
                 });
             }
@@ -137,19 +105,10 @@
 
         function copyRef() {
             const link = document.getElementById('ref-link-text').innerText;
-            const el = document.createElement('textarea');
-            el.value = link;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            const notify = document.getElementById('copy-notification');
-            notify.classList.add('show');
-            tg.HapticFeedback.notificationOccurred('success');
+            const el = document.createElement('textarea'); el.value = link; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            const notify = document.getElementById('copy-notification'); notify.classList.add('show');
             setTimeout(() => notify.classList.remove('show'), 2000);
         }
-
-        // পেজ লোড হলে ডাটা ইনশিয়াল করা
         window.onload = initNetworkData;
     </script>
 </body>
